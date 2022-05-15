@@ -23,3 +23,8 @@
     - Precisa mecher no metro.config.js
 
 7 - Header do Iphone -> Yarn add react-native-iphone-x-helper
+
+8 - Calendários -> yarn add react-native-calendars
+
+9 - Navegação -> yarn add react-navigate/native
+    docks: https://reactnavigation.org/docs/getting-started/
