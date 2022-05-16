@@ -6,13 +6,15 @@
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "api": "json-server ./src/services/server.json --host 192.168.1.6 --port 3333 --delay 700"
   },
   "dependencies": {
     "@expo-google-fonts/archivo": "^0.2.2",
     "@expo-google-fonts/inter": "^0.2.2",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/stack": "^6.2.1",
+    "axios": "^0.27.2",
     "expo": "~45.0.0",
     "expo-app-loading": "~2.0.0",
     "expo-font": "~10.1.0",
@@ -35,6 +37,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@types/": "react-navigation/native",
+    "@types/axios": "^0.14.0",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.67.6",
     "@types/react-native-calendars": "^1.1264.3",
