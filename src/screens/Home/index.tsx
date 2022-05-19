@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, StatusBar } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useNavigation, NavigationProp, ParamListBase } from '@react-navigation/native';
-
+import { useTheme } from 'styled-components';
 import Logo from '../../assets/logo.svg';
 import { api } from '../../services/api';
 
@@ -11,16 +11,20 @@ import {
     Header,
     HeaderContent,
     TotalCars,
-    CarList
+    CarList,
+    MyCarsButton
 } from './styled';
 import { Car } from '../../components/car';
 import { CarDTO } from '../../dtos/CarDTO';
 import { Load } from '../../components/Load';
+import { Ionicons } from '@expo/vector-icons';
 
 export function Home() {
 
-    const [cars, setCars] = useState<CarDTO>();
+    const [cars, setCars] = useState<CarDTO[]>();
     const [loading, setLoading] = useState(true);
+
+    const theme = useTheme();
 
     const carData = {
         brand: "Audi",
@@ -34,9 +38,13 @@ export function Home() {
 
     const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
-    function handleCarDetails() {
-        navigation.navigate('CarDetails')
-    }
+    function handleCarDetails(car: CarDTO) {
+        navigation.navigate('CarDetails', { car });
+    };
+    
+    function handleOpenMyCars(car: CarDTO) {
+        navigation.navigate('MyCars');
+    };
 
     useEffect(() => {
         async function fetchCar() {
@@ -76,14 +84,23 @@ export function Home() {
                     ? <Load />
                     : <CarList
                         data={cars}
-                        key={item => String(item.id)}
+                        keyExtractor={item => item.id}
                         renderItem={({ item }) =>
                             <Car data={item}
-                                onPress={handleCarDetails}
+                                onPress={() => handleCarDetails(item)}
                             />}
                     />
             }
 
+            <MyCarsButton
+                onPress={handleOpenMyCars}
+            >
+                <Ionicons
+                    name='ios-car-sport'
+                    size={32}
+                    color={theme.colors.shape}
+                />
+            </MyCarsButton>
         </Container>
     )
 }

@@ -6,8 +6,6 @@
   }
 
 2 - TypeScript
-    -com expo bearAndFlow tem as pastas IOS e ANDROID
-    - Execute o comando expo init nome-do-seu-app e escolha a opção Bare Workflow -> Minimal;
     - Na raiz do projeto, crie um arquivo tsconfig.json vazio;
     - Execute o comando expo start no terminal. 
         O Expo irá identificar o seu arquivo tsconfig.json e perguntar se você quer que ele instale as dependências necessárias e configure 
