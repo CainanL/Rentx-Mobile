@@ -23,12 +23,12 @@ import { Calendar, DayProps, generateInterval, MarkedDateProps } from "../../com
 import { getPlatformDate } from "../../utils/getPlatformDate";
 import { CarDTO } from "../../dtos/CarDTO";
 
-interface RentalPeriod{
+interface RentalPeriod {
     startFormatted: string;
-    endFormatted: string; 
+    endFormatted: string;
 };
 
-interface Params  {
+interface Params {
     car: CarDTO
 };
 
@@ -41,27 +41,27 @@ export function Scheduling() {
     const navigation = useNavigation<NavigationProp<ParamListBase>>();
     const route = useRoute();
     const { car } = route.params as Params;
-    
-    function handleConfirmRental(){
-        if(!rentalPeriod.startFormatted || !rentalPeriod.endFormatted){
+
+    function handleConfirmRental() {
+        if (!rentalPeriod.startFormatted || !rentalPeriod.endFormatted) {
             Alert.alert('Selecione o intervalo para alugar.');
-        }else{
+        } else {
             navigation.navigate('SchedulingDetails', {
                 car,
                 dates: Object.keys(markedDates)
             })
-        };        
+        };
     };
 
-    function handleBack(){
+    function handleBack() {
         navigation.goBack();
     };
 
-    function handleChangeDate(date: DayProps){
+    function handleChangeDate(date: DayProps) {
         let start = !lastSelectedDate.timestamp ? date : lastSelectedDate;
         let end = date;
 
-        if(start.timestamp > end.timestamp){
+        if (start.timestamp > end.timestamp) {
             start = end;
             end = start;
         }
@@ -126,7 +126,11 @@ export function Scheduling() {
             </Content>
 
             <Footer>
-                <Button title="Confirmar" onPress={handleConfirmRental}/>
+                <Button
+                    title="Confirmar"
+                    onPress={handleConfirmRental}
+                    enabled={!!rentalPeriod.startFormatted}
+                />
             </Footer>
         </Container>
     )

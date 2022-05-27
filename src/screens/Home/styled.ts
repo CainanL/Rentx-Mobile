@@ -33,13 +33,12 @@ export const TotalCars = styled.Text`
 
 export const CarList = styled(
     FlatList as new () => FlatList<CarDTO>
-)
-    .attrs({
-        contentContainerStyle: {
-            padding: 24
-        },
-        showsVerticalScrollIndicator: false
-    })``
+).attrs({
+    contentContainerStyle: {
+        padding: 24
+    },
+    showsVerticalScrollIndicator: false
+})``
 
 export const MyCarsButton = styled(RectButton)`
     width: 60px;

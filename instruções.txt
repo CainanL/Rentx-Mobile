@@ -26,3 +26,6 @@
 
 9 - Navegação -> yarn add react-navigate/native
     docks: https://reactnavigation.org/docs/getting-started/
+
+10 - BUILD -> eas build --platform ios
+	eas build --platform android
