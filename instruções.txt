@@ -29,3 +29,9 @@
 
 10 - BUILD -> eas build --platform ios
 	eas build --platform android
+
+11 - Animações - expo install react-native-reanimated
+    - ver documentação porque tem coisas que devem ser feitas com a instalação
+    - cubic-bezier.com -> site para personalizar bezier (efeito de transação)
+
+12 - SplashScreen -> expo install expo-splash-screen

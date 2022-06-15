@@ -21,7 +21,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 export function Home() {
 
-    const [cars, setCars] = useState<CarDTO[]>();
+    const [cars, setCars] = useState<CarDTO[]>([]);
     const [loading, setLoading] = useState(true);
 
     const theme = useTheme();
@@ -76,7 +76,7 @@ export function Home() {
                         height={RFValue(12)}
                     />
                     <TotalCars>
-                        Total de 12 carros
+                        Total de {cars.length} carros
                     </TotalCars>
                 </HeaderContent>
             </Header>{
