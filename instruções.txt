@@ -35,3 +35,5 @@
     - cubic-bezier.com -> site para personalizar bezier (efeito de transação)
 
 12 - SplashScreen -> expo install expo-splash-screen
+
+13 - lig de animações performaticas

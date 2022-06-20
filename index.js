@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler'//removi do App.tsx e coloquei aqui no inicio de tudo
 import { registerRootComponent } from 'expo';
 
 import App from './App';

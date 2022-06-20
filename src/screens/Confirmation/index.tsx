@@ -3,7 +3,7 @@ import { useWindowDimensions } from "react-native";//para pegar as dimensões da
 //dimensions -> usado em styled components ou outras coisas que não podem usar hooks;
 //useWindowDimessions -> usado em todos os locais onde pode ser usado hooks;
 
-import { useNavigation, NavigationProp, ParamListBase } from "@react-navigation/native";
+import { useNavigation, NavigationProp, ParamListBase, useRoute } from "@react-navigation/native";
 
 import LogoSvg from '../../assets/logo_background_gray.svg';
 import DoneSvg from '../../assets/done.svg'
@@ -18,13 +18,29 @@ import {
 import { ConfirmButton } from "../../components/ConfirmButton";
 import { StatusBar } from "react-native";
 
-export function SchedulingComplete() {
+interface Params {
+    title: string;
+    message: string;
+    nextScreenRoute: string;
+}
+
+export function Confirmation() {
+
+    const route = useRoute();
+
+    const {
+        message,
+        nextScreenRoute,
+        title
+    } = route.params as Params;
+
+
     const { width } = useWindowDimensions();
 
     const navigation = useNavigation<NavigationProp<ParamListBase>>()
 
     function handleConfirm(){
-        navigation.navigate('Home')
+        navigation.navigate(nextScreenRoute)
     }
 
     return (
@@ -38,12 +54,10 @@ export function SchedulingComplete() {
 
             <Content>
                 <DoneSvg width={86} height={86}/>
-                <Title>Carro Alugado</Title>
+                <Title>{title}</Title>
 
                 <Message>
-                    Agora você só precisa ir {'\n'}
-                    até a consessionária da RENTX {'\n'}
-                    pegar o seu automóvel
+                    {message}
                 </Message>
             </Content>
             <Footer>
