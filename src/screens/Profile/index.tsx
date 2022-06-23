@@ -19,24 +19,26 @@ import {
     Section,
 } from "./styled";
 import { Input } from "../../components/Input";
-import { KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Alert } from "react-native";
 import {
     useBottomTabBarHeight//para capturar a altura do tabBar
 } from '@react-navigation/bottom-tabs'
 import * as ImagePicker from 'expo-image-picker';
+import * as Yup from 'yup';
 import { PasswordInput } from "../../components/PasswordInput";
 import { useAuth } from "../../hooks/auth";
 import { database } from "../../database";
 import { User as ModelUser } from "../../database/models/User";
+import { Button } from "../../components/Button";
 
 export function Profile() {
-    const { user, signOut } = useAuth();
+    const { user, signOut, updateUser } = useAuth();
 
     const [option, setOption] = useState<'dataEdit' | 'passwordEdit'>('dataEdit')
     const [avatar, setAvatar] = useState(user.avatar);
     const [name, setName] = useState(user.name);
     const [driverLicense, setDriverLicense] = useState(user.driver_license);
-    
+
 
     const theme = useTheme();
 
@@ -70,6 +72,36 @@ export function Profile() {
         };
     };
 
+    async function handleProfileUpdate() {
+        console.log('ok')
+        try {
+            const schema = Yup.object().shape({
+                driverLicense: Yup.string().required('CNH é obrigatória'),
+                name: Yup.string().required('Nome é obrigatório')
+            });
+
+            const data = { name, driverLicense };
+            await schema.validate(data);
+
+            await updateUser({
+                id: user.id,
+                user_id: user.user_id,
+                email: user.email,
+                name,
+                driver_license: driverLicense,
+                avatar,
+                token: user.token
+            });
+
+            Alert.alert('Perfil atualizado!');
+        } catch (error) {
+            if (error instanceof Yup.ValidationError) {
+                Alert.alert('Opa', error.message);
+            }
+            Alert.alert('Não foi possível atualizar o perfil')
+        };
+    }
+
     return (
         <KeyboardAvoidingView behavior="position" enabled>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -89,7 +121,7 @@ export function Profile() {
                             </LogoutButton>
                         </HeaderTop>
                         <PhotoContainer>
-                           {!!avatar && <Photo source={{ uri: avatar }} />}
+                            {!!avatar && <Photo source={{ uri: avatar }} />}
                             <PhotoButton onPress={handleAvatarSelect}>
                                 <Feather
                                     name="camera"
@@ -159,7 +191,10 @@ export function Profile() {
                                     />
                                 </Section>
                         }
-
+                        <Button
+                            title="Salvar alterações"
+                            onPress={handleProfileUpdate}
+                        />
                     </Content>
                 </Container>
             </TouchableWithoutFeedback>

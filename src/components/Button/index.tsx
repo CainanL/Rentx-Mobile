@@ -27,7 +27,7 @@ export function Button({
 }: Props) {
     const theme = useTheme();
     return (
-        <Container
+        <Button
             color={color ? color : theme.colors.main}
             onPress={onPress}
             enabled={enabled}
@@ -40,7 +40,7 @@ export function Button({
             }
 
 
-        </Container>
+        </Button>
     )
 }
 
