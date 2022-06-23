@@ -16,6 +16,7 @@ import Animated, {
     useAnimatedGestureHandler,//para pegar a localização da animação
     withSpring//para lidar com fisica -> efeito elastico
 } from 'react-native-reanimated';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 import {
     RectButton,
@@ -41,6 +42,8 @@ export function Home() {
 
     const [cars, setCars] = useState<CarDTO[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const netInfo = useNetInfo();
 
     const positionY = useSharedValue(0);
     const positionX = useSharedValue(0);
@@ -113,6 +116,14 @@ export function Home() {
         })
     }, []) */
 
+    useEffect(() => {
+        if(netInfo.isConnected){//verifica se o usuário tem ou não conecxão com a internet
+            Alert.alert('Você está online');
+        }else {
+            Alert.alert('Você está offline')
+        }
+    }, [netInfo.isConnected]);
+
     return (
         <Container>
             <StatusBar
@@ -146,7 +157,7 @@ export function Home() {
                     />
             }
 
-           {/*  <PanGestureHandler
+            {/*  <PanGestureHandler
                 onGestureEvent={onGestureEvent}
             >
                 <Animated.View

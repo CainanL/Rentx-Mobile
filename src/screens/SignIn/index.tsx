@@ -15,6 +15,7 @@ import theme from "../../styles/theme";
 import { Container, Footer, Form, Header, SubTitle, Title } from "./styles";
 import { useAuth } from "../../hooks/auth";
 import { database } from "../../database";
+import { LogoutButton } from "../Profile/styled";
 
 export function SignIn() {
 
@@ -30,7 +31,7 @@ export function SignIn() {
                 email: Yup.string().required('E-mail obrigatório').email('Digite um e-mail valido'),
                 password: Yup.string().required('Senha é obrigatória')
             });
-            await schema.validate({ email, password });            
+            await schema.validate({ email, password });
             signIn({ email, password });
         } catch (error) {
             if (error instanceof Yup.ValidationError) {
@@ -92,20 +93,24 @@ export function SignIn() {
                     </Form>
 
                     <Footer>
-                        <Button
-                            title="Login"
-                            onPress={handleSignIn}
-                            enabled={true}
-                            loading={false}
-                        />
-                        <Button
-                            title="Criar conta gratúita"
-                            onPress={handleNewAccount}
-                            enabled={true}
-                            loading={false}
-                            light
-                            color={theme.colors.background_secondary}
-                        />
+                        <LogoutButton onPress={handleSignIn}> 
+                            <Button
+                                title="Login"
+                                onPress={handleSignIn}
+                                enabled={true}
+                                loading={false}
+                            />
+                        </LogoutButton>
+                        <LogoutButton onPress={handleNewAccount}>
+                            <Button
+                                title="Criar conta gratúita"
+                                onPress={handleNewAccount}
+                                enabled={true}
+                                loading={false}
+                                light
+                                color={theme.colors.background_secondary}
+                            />
+                        </LogoutButton>
                     </Footer>
                 </Container>
             </TouchableWithoutFeedback>
