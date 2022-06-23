@@ -45,16 +45,16 @@ export function Home() {
     const positionY = useSharedValue(0);
     const positionX = useSharedValue(0);
 
-    const myCarsButtonStyle = useAnimatedStyle(() => {
+    /* const myCarsButtonStyle = useAnimatedStyle(() => {
         return {
             transform: [
                 { translateX: positionX.value },
                 { translateY: positionY.value },
             ]
         }
-    });
+    }); */
 
-    const onGestureEvent = useAnimatedGestureHandler({
+    /* const onGestureEvent = useAnimatedGestureHandler({
         onStart(_, context: any) {//quando o usuário clica e começa a arrastar
             context.positionX = positionX.value;
             context.positionY = positionY.value;
@@ -67,7 +67,7 @@ export function Home() {
             positionX.value = withSpring(0);
             positionY.value = withSpring(0);
         }
-    })
+    }) */
 
     const theme = useTheme();
 
@@ -87,9 +87,9 @@ export function Home() {
         navigation.navigate('CarDetails', { car });
     };
 
-    function handleOpenMyCars(car: CarDTO) {
+    /* function handleOpenMyCars(car: CarDTO) {
         navigation.navigate('MyCars');
-    };
+    }; */
 
     useEffect(() => {
         async function fetchCar() {
@@ -107,11 +107,11 @@ export function Home() {
         fetchCar();
     }, []);
 
-    useEffect(() => {
+    /* useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', () => {
             return true// retorna um true quando clica no backbutton do android, então ele simplesmente não faz nada e não volta para a tela de splash
         })
-    }, [])
+    }, []) */
 
     return (
         <Container>
@@ -146,7 +146,7 @@ export function Home() {
                     />
             }
 
-            <PanGestureHandler
+           {/*  <PanGestureHandler
                 onGestureEvent={onGestureEvent}
             >
                 <Animated.View
@@ -170,12 +170,12 @@ export function Home() {
                         />
                     </ButtonAnimated>
                 </Animated.View>
-            </PanGestureHandler>
+            </PanGestureHandler> */}
         </Container>
     )
 };
 
-const style = StyleSheet.create({
+/* const style = StyleSheet.create({
     button: {
         width: 60,
         height: 60,
@@ -183,4 +183,4 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     }
-})
+}) */

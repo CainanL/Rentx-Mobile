@@ -21,9 +21,9 @@ import { getAccessory } from "../../utils/getAccessoryIcons";
 interface Props extends RectButtonProps {
     data: CarDTO;
 }
-
 export function Car({ data, ...rest }: Props) {
     const MotorIcon = getAccessory(data.fuel_type);
+    
     return (
         <Container {...rest}>
             <Details>
@@ -32,8 +32,8 @@ export function Car({ data, ...rest }: Props) {
 
                 <About>
                     <Rent>
-                        <Period>{data.rent.period}</Period>
-                        <Price>R$ {data.rent.price}</Price>
+                        <Period>{data?.period}</Period>
+                        <Price>R$ {data?.price}</Price>
                     </Rent>
 
                     <Type>

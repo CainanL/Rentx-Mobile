@@ -37,3 +37,16 @@
 12 - SplashScreen -> expo install expo-splash-screen
 
 13 - lig de animações performaticas
+
+14 - offiline first 
+    buildscript {
+    ext {
+
+        /*
+            adicione essas duas linhas de comando no final do ext no build.gradle na pasta android
+            para ele conseguir rodar o watermelon de boa
+        */
+        kotlin_version = '1.5.20' 
+        kotlinVersion = '1.5.20'
+    }
+    }

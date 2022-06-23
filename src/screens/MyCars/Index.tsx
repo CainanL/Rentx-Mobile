@@ -24,6 +24,7 @@ import {
     CarFooter
 } from './styles';
 import { LoadAnimation } from "../../components/LoadAnimation";
+import { isSameHour } from "date-fns";
 
 interface CarProps {
     car: CarDTO;
@@ -42,19 +43,28 @@ export function MyCars() {
 
     useEffect(() => {
 
+        let isMounted = true;//para garantir que os estados só serão atualizados se o componente estiver montado
+
         async function fetchCars() {
             try {
                 const response = await api.get('/schedules_byuser?user_id=1');
-                console.log(response.data);
-                setCars(response.data)
+                if (isMounted) {
+                    setCars(response.data);
+                };
             } catch (error) {
                 console.log(error);
             } finally {
-                setLoading(false);
+                if (isMounted) {
+                    setLoading(false);
+                };
             };
         };
 
         fetchCars();
+
+        return () => {//é execultado quando o ciclo de vida do useEffect se encerra;
+            isMounted = false;
+        };
     }, [])
 
     function handleBack() {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import * as Yup from 'yup';
 import {
@@ -13,12 +13,15 @@ import { Input } from "../../components/Input";
 import { PasswordInput } from "../../components/PasswordInput";
 import theme from "../../styles/theme";
 import { Container, Footer, Form, Header, SubTitle, Title } from "./styles";
+import { useAuth } from "../../hooks/auth";
+import { database } from "../../database";
 
 export function SignIn() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigation = useNavigation<NavigationProp<ParamListBase>>();
+    const { signIn } = useAuth();
 
     async function handleSignIn() {
 
@@ -27,11 +30,8 @@ export function SignIn() {
                 email: Yup.string().required('E-mail obrigatório').email('Digite um e-mail valido'),
                 password: Yup.string().required('Senha é obrigatória')
             });
-
-            await schema.validate({ email, password });
-            Alert.alert('Tudo certo')
-
-            //fazer login.
+            await schema.validate({ email, password });            
+            signIn({ email, password });
         } catch (error) {
             if (error instanceof Yup.ValidationError) {
                 Alert.alert('Opa', error.message);

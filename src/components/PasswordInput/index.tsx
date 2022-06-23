@@ -52,6 +52,7 @@ export function PasswordInput({ iconName, value, ...rest }: Props) {
                 onFocus={handleIsInputFocus}
                 onBlur={handleInputBlur}
                 isFocused={isFocused}
+                autoCorrect={false}
                 {...rest}
             />
             <BorderlessButton onPress={handlePasswordVisibilityChange}>
