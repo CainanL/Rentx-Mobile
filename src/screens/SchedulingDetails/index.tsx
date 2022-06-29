@@ -71,34 +71,25 @@ export function SchedulingDetails() {
 
     async function handleConfirmRental() {
 
-        const schedulesByCar = await api.get(`/schedules_bycars/${car.id}`);
 
-        const unavailable_dates = [
-            ...schedulesByCar.data.unavailable_dates,
-            ...dates
-        ];
 
-        await api.post('schedules_byuser', {
+        await api.post('/rentals', {
             user_id: 1,
-            car,
-            startDate: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyy'),
-            endDate: format(getPlatformDate(new Date(dates[dates.length - 1])), 'dd/MM/yyy')
-        })
-
-        api.put(`/schedules_bycars/${car.id}`, {
-            id: car.id,
-            unavailable_dates
+            car_id: car.id,
+            start_date: new Date(dates[0]),
+            end_date: new Date(dates[dates.length - 1]),
+            total: rentTotal
         }).then(() =>
             navigation.navigate('Confirmation', {
                 nextScreenRoute: 'Home',
                 title: 'Carro alugado!',
                 message: `Agora você só precisa ir\naté a concecionaria da Rentx\npara pegar seu automovel.`
             })
-        )
-            .catch(() => {
-                Alert.alert('Não foi possível confirmar o agendamento');
-                setLoading(false);
-            })
+        ).catch((err) => {
+            console.log(err.message)
+            Alert.alert('Não foi possível confirmar o agendamento');
+            setLoading(false);
+        })
 
 
 
