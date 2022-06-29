@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
     Alert,
     StatusBar,
+    Button,
     StyleSheet,
     BackHandler//para fazer modificações nos botões do voltar
 } from 'react-native';
@@ -17,11 +18,14 @@ import Animated, {
     withSpring//para lidar com fisica -> efeito elastico
 } from 'react-native-reanimated';
 import { useNetInfo } from '@react-native-community/netinfo';
+import { synchronize } from '@nozbe/watermelondb/sync';
 
 import {
     RectButton,
     PanGestureHandler
 } from 'react-native-gesture-handler';
+
+import { Car as ModelCar } from '../../database/models/Car';
 
 const ButtonAnimated = Animated.createAnimatedComponent(RectButton)//cria um RectButton animado e joga para dentor da variável.
 
@@ -37,10 +41,11 @@ import { Car } from '../../components/car';
 import { CarDTO } from '../../dtos/CarDTO';
 import { LoadAnimation } from '../../components/LoadAnimation';
 import { Ionicons } from '@expo/vector-icons';
+import { database } from '../../database';
 
 export function Home() {
 
-    const [cars, setCars] = useState<CarDTO[]>([]);
+    const [cars, setCars] = useState<ModelCar[]>([]);
     const [loading, setLoading] = useState(true);
 
     const netInfo = useNetInfo();
@@ -86,7 +91,7 @@ export function Home() {
 
     const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
-    function handleCarDetails(car: CarDTO) {
+    function handleCarDetails(car: ModelCar) {
         navigation.navigate('CarDetails', { car });
     };
 
@@ -95,19 +100,31 @@ export function Home() {
     }; */
 
     useEffect(() => {
+        let isMounted = true;
         async function fetchCar() {
             try {
-                const response = await api.get('/cars');
-                setCars(response.data)
+                const carCollection = database.get<ModelCar>('cars');
+                const cars = await carCollection.query().fetch();
+
+
+
+                if (isMounted) {
+                    setCars(cars);
+                };
             } catch (error) {
-                console.log(error);
+                console.log((error as Error).message);
                 Alert.alert('Erro ao listar carros');
             } finally {
-                setLoading(false);
+                if (isMounted) {
+                    setLoading(false);
+                };
             }
         };
 
         fetchCar();
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     /* useEffect(() => {
@@ -116,13 +133,36 @@ export function Home() {
         })
     }, []) */
 
+
+
+    async function offlineSynchronize() {
+        await synchronize({//função que retorna registros novos, registros que tiveram atualizaões e registros que foram deletados.
+            database, //base de dados que será sincronizada
+            pullChanges: async ({
+                lastPulledAt /* timestamp da ultima atualização */
+            }) => { //função que vai no backend buscar por atualizações
+                const response = await api
+                    .get(`/cars/sync/pull?lastPulledVersion=${lastPulledAt || 0}`)//se tiver algo no banco, pega quando foi atualizado, se não, pega o que tem no back
+
+                const { changes, latestVersion } = response.data;
+                console.log("##### SINCRONIZAÇÃO ####")
+                console.log(changes)
+                return { changes, timestamp: latestVersion };
+            },
+            pushChanges: async ({ changes }) => {
+                const user = changes.users;
+                console.log("##### ERROR ####")
+
+                await api.post('/users/sync', user).catch(console.log);
+            }
+        });
+    };
+
     useEffect(() => {
-        if(netInfo.isConnected){//verifica se o usuário tem ou não conecxão com a internet
-            Alert.alert('Você está online');
-        }else {
-            Alert.alert('Você está offline')
+        if (netInfo.isConnected === true) {
+            offlineSynchronize();
         }
-    }, [netInfo.isConnected]);
+    }, [netInfo.isConnected])
 
     return (
         <Container>
@@ -144,7 +184,8 @@ export function Home() {
                         </TotalCars>
                     }
                 </HeaderContent>
-            </Header>{
+            </Header>
+            {
                 loading
                     ? <LoadAnimation />
                     : <CarList

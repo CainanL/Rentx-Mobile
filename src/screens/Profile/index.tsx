@@ -30,9 +30,11 @@ import { useAuth } from "../../hooks/auth";
 import { database } from "../../database";
 import { User as ModelUser } from "../../database/models/User";
 import { Button } from "../../components/Button";
+import { useNetInfo } from "@react-native-community/netinfo";
 
 export function Profile() {
     const { user, signOut, updateUser } = useAuth();
+    const netInfo = useNetInfo();
 
     const [option, setOption] = useState<'dataEdit' | 'passwordEdit'>('dataEdit')
     const [avatar, setAvatar] = useState(user.avatar);
@@ -55,7 +57,7 @@ export function Profile() {
             [//array de botões do Alert.alert()
                 {
                     text: 'Cancelar',
-                    onPress: ()=>{},
+                    onPress: () => { },
                     style: 'cancel'
                 },
                 {
@@ -67,7 +69,11 @@ export function Profile() {
     };
 
     function handleOptionChange(optionSelected: 'dataEdit' | 'passwordEdit') {
-        setOption(optionSelected);
+        if (netInfo.isConnected === false && optionSelected === 'passwordEdit') {
+            Alert.alert('Você está offiline', 'Para mudar a senha, conect-se a Internet')
+        } else {
+            setOption(optionSelected);
+        }
     };
 
     async function handleAvatarSelect() {

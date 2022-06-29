@@ -42,6 +42,7 @@ import { getPlatformDate } from "../../utils/getPlatformDate";
 import { TotalCars } from "../Home/styled";
 import { api } from "../../services/api";
 import { Alert } from "react-native";
+import { useNetInfo } from "@react-native-community/netinfo";
 
 interface Params {
     car: CarDTO;
@@ -57,12 +58,14 @@ export function SchedulingDetails() {
 
     const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod>({} as RentalPeriod)
     const [loading, setLoading] = useState(false);
+    const [carUpdated, setCarUpdated] = useState<CarDTO>({} as CarDTO)
+    const netInfo = useNetInfo();
 
     const navigation = useNavigation<NavigationProp<ParamListBase>>();
     const route = useRoute();
     const { car, dates } = route.params as Params;
 
-    const rentTotal = Number(dates.length * car.rent.price);
+    const rentTotal = Number(dates.length * car.price);
 
     const theme = useTheme();
 
@@ -112,6 +115,16 @@ export function SchedulingDetails() {
         })
     }, [])
 
+    useEffect(() => {
+        async function fetchCarUpdate() {
+            const response = await api.get(`/cars/${car.id}`);
+            setCarUpdated(response.data);
+        };
+        if (netInfo.isConnected === true) {
+            fetchCarUpdate();
+        };
+    }, [netInfo.isConnected]);
+
     return (
         <Container>
             <Header>
@@ -119,7 +132,10 @@ export function SchedulingDetails() {
 
             </Header>
             <CarImages>
-                <ImageSlider imagesUrl={car.photos} />
+                <ImageSlider imagesUrl={
+                    !!carUpdated.photos ?
+                        carUpdated.photos : [{ id: car.thumbnail, photo: car.thumbnail }]
+                } />
             </CarImages>
 
             <Content>
@@ -130,23 +146,24 @@ export function SchedulingDetails() {
                     </Description>
 
                     <Rent>
-                        <Period>{car.rent.period}</Period>
-                        <Price>R$ {car.rent.price}</Price>
+                        <Period>{car.period}</Period>
+                        <Price>R$ {car.price}</Price>
                     </Rent>
                 </Details>
-                <Accessories>
-
-                    {
-                        car.accessories.map(accessory => (
-                            <Accessory
-                                key={accessory.type}
-                                name={accessory.name}
-                                icon={getAccessory(accessory.type)}
-                            />
-                        ))
-                    }
-
-                </Accessories>
+                {
+                    carUpdated.accessories &&
+                    <Accessories>
+                        {
+                            carUpdated.accessories.map(accessory => (
+                                <Accessory
+                                    key={accessory.type}
+                                    name={accessory.name}
+                                    icon={getAccessory(accessory.type)}
+                                />
+                            ))
+                        }
+                    </Accessories>
+                }
 
                 <ReantalPeriod>
                     <CalendarIcon>
@@ -177,7 +194,7 @@ export function SchedulingDetails() {
                 <RentalPrice>
                     <RentalPriceLabel>TOTAL</RentalPriceLabel>
                     <RentalPriceDetails>
-                        <RentalPriceQuota>{`R$ ${car.rent.price} x${dates.length} diárias`}</RentalPriceQuota>
+                        <RentalPriceQuota>{`R$ ${car.price} x${dates.length} diárias`}</RentalPriceQuota>
                         <RentalPriceTotal>R$ {rentTotal}</RentalPriceTotal>
                     </RentalPriceDetails>
                 </RentalPrice>

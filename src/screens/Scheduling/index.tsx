@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BackButton } from "../../components/BackButton";
 import { useTheme } from "styled-components";
 import { useNavigation, NavigationProp, ParamListBase, useRoute } from "@react-navigation/native";
@@ -22,6 +22,9 @@ import { Button } from "../../components/Button";
 import { Calendar, DayProps, generateInterval, MarkedDateProps } from "../../components/Calendar";
 import { getPlatformDate } from "../../utils/getPlatformDate";
 import { CarDTO } from "../../dtos/CarDTO";
+import { api } from "../../services/api";
+import { useNetInfo } from "@react-native-community/netinfo";
+
 
 interface RentalPeriod {
     startFormatted: string;
@@ -36,6 +39,8 @@ export function Scheduling() {
     const [lastSelectedDate, setLastSelectedDate] = useState<DayProps>({} as DayProps);
     const [markedDates, setMarkedDates] = useState<MarkedDateProps>({} as MarkedDateProps);
     const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod>({} as RentalPeriod);
+    const [carUpdated, setCarUpdated] = useState<CarDTO>({} as CarDTO)
+    const netInfo = useNetInfo();
 
     const theme = useTheme();
     const navigation = useNavigation<NavigationProp<ParamListBase>>();
@@ -79,6 +84,16 @@ export function Scheduling() {
             endFormatted: format(getPlatformDate(new Date(endDate)), 'dd/MM/yyy')
         })
     }
+
+    useEffect(() => {
+        async function fetchCarUpdate() {
+            const response = await api.get(`/cars/${car.id}`);
+            setCarUpdated(response.data);
+        };
+        if (netInfo.isConnected === true) {
+            fetchCarUpdate();
+        };
+    }, [netInfo.isConnected]);
 
     return (
         <Container>
